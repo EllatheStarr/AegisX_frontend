@@ -1,320 +1,374 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import {
   useMotionTemplate,
   useMotionValue,
-  motion,
   animate,
 } from "framer-motion";
+import { 
+  Shield, 
+  AlertCircle, 
+  ArrowRight, 
+  Lock, 
+  Mail,
+  User,
+  Building,
+  CheckCircle,
+  CreditCard
+} from "lucide-react";
 
-const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
+const COLORS = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    companyName: "",
+    fullName: "",
     email: "",
+    company: "",
     password: "",
-    confirmPassword: "",
-    industry: "",
-    size: "10-50",
+    confirmPassword: ""
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1);
   const [success, setSuccess] = useState(false);
 
-  const color = useMotionValue(COLORS_TOP[0]);
+  const color = useMotionValue(COLORS[0]);
 
-  React.useEffect(() => {
-    animate(color, COLORS_TOP, {
+  useEffect(() => {
+    animate(color, COLORS, {
       ease: "easeInOut",
       duration: 10,
       repeat: Infinity,
       repeatType: "mirror",
     });
-  }, []);
+  }, [color]);
 
   const backgroundImage = useMotionTemplate`radial-gradient(125% 125% at 50% 0%, #020617 50%, ${color})`;
   const border = useMotionTemplate`1px solid ${color}`;
-  const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;
+  const boxShadow = useMotionTemplate`0px 4px 20px ${color}`;
+  const glowEffect = useMotionTemplate`0px 0px 30px ${color}`;
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: value
     });
   };
 
-  const validateStep1 = () => {
-    if (!formData.companyName.trim()) {
-      setError("Company name is required");
-      return false;
-    }
-    if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email)) {
-      setError("Valid email is required");
-      return false;
-    }
-    return true;
-  };
-
-  const validateStep2 = () => {
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return false;
-    }
+  const handleSignup = (e) => {
+    e.preventDefault();
+    setError("");
+    
+    // Simple validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
-      return false;
+      return;
     }
-    if (!formData.industry) {
-      setError("Please select your industry");
-      return false;
+    
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
     }
-    return true;
-  };
-
-  const nextStep = () => {
-    if (step === 1 && validateStep1()) {
-      setError("");
-      setStep(2);
-    }
-  };
-
-  const prevStep = () => {
-    setStep(1);
-    setError("");
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateStep2()) {
-      setLoading(true);
-      setError("");
+    
+    setLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      setSuccess(true);
       
-      // Simulate API call
+      // Redirect after showing success message
       setTimeout(() => {
-        setLoading(false);
-        setSuccess(true);
-      }, 1500);
-    }
+        window.navigate('/dashboard');
+      }, 2000);
+    }, 1500);
   };
 
   return (
     <motion.section
       style={{ backgroundImage }}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950 px-4 py-12 text-gray-200"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950 px-4 py-24 text-gray-200"
     >
-      <div className="relative z-10 w-full max-w-lg">
+      {/* Background animated elements */}
+      <div className="absolute inset-0 overflow-hidden -z-5">
+        <motion.div 
+          className="absolute top-1/4 -right-40 w-80 h-80 bg-opacity-50 rounded-full filter blur-[100px]"
+          animate={{ 
+            backgroundColor: COLORS,
+            x: [0, -20, 0],
+            y: [0, 15, 0],
+          }}
+          transition={{ 
+            duration: 12, 
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        />
+        <motion.div 
+          className="absolute -bottom-40 left-1/4 w-96 h-96 bg-opacity-50 rounded-full filter blur-[120px]"
+          animate={{ 
+            backgroundColor: [...COLORS].reverse(),
+            x: [0, 30, 0],
+            y: [0, -20, 0],
+          }}
+          transition={{ 
+            duration: 15, 
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        />
+      </div>
+
+      <div className="relative z-10 w-full max-w-xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Create Your Enterprise Account</h1>
-          <p className="text-gray-400">Get started with AegisX cyberthreat prevention</p>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-2 flex justify-center"
+          >
+            <motion.div 
+              style={{ boxShadow: glowEffect }}
+              className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-medium py-1.5 px-4 rounded-full border border-gray-800 bg-gray-900/50 backdrop-blur-sm text-gray-200"
+            >
+              <Shield size={14} className="text-white/90" />
+              Start Protection
+            </motion.div>
+          </motion.div>
+
+          <motion.h1 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-3xl font-bold mb-2 bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent"
+          >
+            Create Your Account
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-gray-400 font-light"
+          >
+            Join the growing network of neobanks protected by Aegis
+          </motion.p>
         </div>
 
         <motion.div
-          className="bg-gray-900/80 backdrop-blur-sm p-8 rounded-xl"
+          className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/30 p-8 rounded-2xl shadow-lg"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
           {success ? (
             <div className="text-center py-6">
               <motion.div
-                className="w-20 h-20 bg-green-500 rounded-full mx-auto mb-6 flex items-center justify-center"
+                className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full mx-auto mb-4 flex items-center justify-center"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 200, damping: 10 }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+                <CheckCircle className="h-8 w-8 text-white" strokeWidth={1.5} />
               </motion.div>
-              <h2 className="text-2xl font-semibold mb-3">Registration Complete!</h2>
-              <p className="text-gray-400 mb-6">Thank you for choosing AegisX to protect your financial platform.</p>
-              <p className="text-gray-400 mb-6">Our team will contact you shortly to discuss your security needs.</p>
-              <div className="flex space-x-4 justify-center">
-                <motion.a
-                  href="/login"
-                  style={{ border }}
-                  className="px-6 py-2 rounded-md transition-colors"
-                  whileHover={{ scale: 1.02 }}
-                >
-                  Go to Login
-                </motion.a>
-                <motion.a
-                  href="/"
-                  className="px-6 py-2 rounded-md border border-gray-600 transition-colors"
-                  whileHover={{ scale: 1.02 }}
-                >
-                  Back to Home
-                </motion.a>
-              </div>
+              <h2 className="text-xl font-semibold mb-2 text-white">Registration Successful!</h2>
+              <p className="text-gray-400 mb-4 font-light">Your account has been created. Redirecting you to your dashboard...</p>
+              <motion.button
+                style={{ border }}
+                className="w-full py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+                whileHover={{ scale: 1.02 }}
+                onClick={() => window.navigate('/dashboard')}
+              >
+                Go to Dashboard
+                <ArrowRight size={16} />
+              </motion.button>
             </div>
           ) : (
-            <form onSubmit={step === 2 ? handleSubmit : nextStep}>
-              {step === 1 && (
-                <motion.div
-                  className="space-y-5"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <div>
-                    <label htmlFor="companyName" className="block text-sm font-medium mb-1">Company Name</label>
-                    <input
-                      id="companyName"
-                      name="companyName"
-                      type="text"
-                      value={formData.companyName}
-                      onChange={handleChange}
-                      placeholder="Acme Financial Technologies"
-                      className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
+            <form onSubmit={handleSignup} className="space-y-5">
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium mb-1 text-gray-300">Full Name</label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <User size={16} />
                   </div>
+                  <input
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    placeholder="John Doe"
+                    className="w-full px-10 py-3 bg-gray-800/50 border border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                    required
+                  />
+                </div>
+              </div>
 
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-1">Company Email</label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="contact@company.com"
-                      className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-1 text-gray-300">Work Email</label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Mail size={16} />
                   </div>
-                </motion.div>
-              )}
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="you@company.com"
+                    className="w-full px-10 py-3 bg-gray-800/50 border border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                    required
+                  />
+                </div>
+              </div>
 
-              {step === 2 && (
-                <motion.div
-                  className="space-y-5"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <div>
-                    <label htmlFor="password" className="block text-sm font-medium mb-1">Create Password</label>
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
+              <div>
+                <label htmlFor="company" className="block text-sm font-medium mb-1 text-gray-300">Company Name</label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Building size={16} />
                   </div>
+                  <input
+                    id="company"
+                    name="company"
+                    type="text"
+                    value={formData.company}
+                    onChange={handleInputChange}
+                    placeholder="Your Neobank"
+                    className="w-full px-10 py-3 bg-gray-800/50 border border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                    required
+                  />
+                </div>
+              </div>
 
-                  <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">Confirm Password</label>
-                    <input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium mb-1 text-gray-300">Password</label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Lock size={16} />
                   </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Min. 8 characters"
+                    className="w-full px-10 py-3 bg-gray-800/50 border border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                    required
+                  />
+                </div>
+              </div>
 
-                  <div>
-                    <label htmlFor="industry" className="block text-sm font-medium mb-1">Industry</label>
-                    <select
-                      id="industry"
-                      name="industry"
-                      value={formData.industry}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    >
-                      <option value="">Select Industry</option>
-                      <option value="banking">Banking</option>
-                      <option value="fintech">Fintech</option>
-                      <option value="neobank">Neobank</option>
-                      <option value="insurance">Insurance</option>
-                      <option value="wealth_management">Wealth Management</option>
-                      <option value="payments">Payments</option>
-                      <option value="other">Other Financial Services</option>
-                    </select>
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1 text-gray-300">Confirm Password</label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Lock size={16} />
                   </div>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    placeholder="Confirm password"
+                    className="w-full px-10 py-3 bg-gray-800/50 border border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                    required
+                  />
+                </div>
+              </div>
 
-                  <div>
-                    <label htmlFor="size" className="block text-sm font-medium mb-1">Company Size</label>
-                    <select
-                      id="size"
-                      name="size"
-                      value={formData.size}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="1-9">1-9 employees</option>
-                      <option value="10-50">10-50 employees</option>
-                      <option value="51-200">51-200 employees</option>
-                      <option value="201-500">201-500 employees</option>
-                      <option value="501+">501+ employees</option>
-                    </select>
-                  </div>
-                </motion.div>
-              )}
+              <div className="pt-2">
+                <div className="flex items-center mb-4">
+                  <input 
+                    id="terms" 
+                    type="checkbox" 
+                    required
+                    className="w-4 h-4 text-blue-500 bg-gray-800 border-gray-700 rounded focus:ring-blue-500" 
+                  />
+                  <label htmlFor="terms" className="ml-2 text-sm text-gray-400">
+                    I agree to the <a href="#" className="text-blue-400 hover:underline">Terms of Service</a> and <a href="#" className="text-blue-400 hover:underline">Privacy Policy</a>
+                  </label>
+                </div>
+              </div>
 
               {error && (
-                <div className="text-red-500 text-sm mt-4">
-                  {error}
-                </div>
+                <motion.div 
+                  className="text-red-400 text-sm py-3 bg-red-900/20 backdrop-blur-sm border border-red-900/50 rounded-xl px-4"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex items-center">
+                    <AlertCircle className="w-5 h-5 mr-2" strokeWidth={1.5} />
+                    {error}
+                  </div>
+                </motion.div>
               )}
 
-              <div className="mt-6 flex justify-between">
-                {step === 2 && (
-                  <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="px-4 py-2 border border-gray-600 rounded-md"
-                    onClick={prevStep}
-                  >
-                    Back
-                  </motion.button>
-                )}
-                
+              <div>
                 <motion.button
                   type="submit"
                   style={{ boxShadow }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`px-6 py-2 rounded-md transition-colors ${step === 2 ? 'bg-blue-600 hover:bg-blue-700 ml-auto' : 'bg-blue-600 hover:bg-blue-700 w-full'} ${loading ? 'bg-gray-700' : ''}`}
+                  className="w-full py-3.5 rounded-xl transition-colors bg-gray-800/70 hover:bg-gray-700/70 border border-gray-700/50 backdrop-blur-sm text-white font-medium flex items-center justify-center gap-2"
                   disabled={loading}
                 >
-                  {loading ? 'Processing...' : step === 1 ? 'Next' : 'Create Account'}
+                  {loading ? 'Creating Account...' : 'Create Account'}
+                  {!loading && <ArrowRight size={16} />}
                 </motion.button>
               </div>
             </form>
           )}
 
-          {!success && (
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-400">
-                Already have an account?{' '}
-                <a href="/login" className="text-blue-400 hover:underline">
-                  Log in
-                </a>
-              </p>
-            </div>
-          )}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="mt-6 text-center text-sm text-gray-400"
+          >
+            <p>
+              Already have an account?{' '}
+              <a href="/login" className="text-blue-400 hover:text-blue-300 transition-colors font-medium">
+                Log in
+              </a>
+            </p>
+          </motion.div>
         </motion.div>
 
-        {!success && (
-          <div className="mt-8 text-center">
-            <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
-              ← Back to home
-            </a>
-          </div>
-        )}
+        <div className="mt-8 flex justify-center items-center">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            className="flex items-center gap-2 text-gray-400 text-sm"
+          >
+            <CreditCard size={14} />
+            <span>No credit card required for trial</span>
+          </motion.div>
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
+          className="mt-4 text-center"
+        >
+          <a href="/" className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+            <motion.div 
+              whileHover={{ x: -3 }} 
+              className="flex items-center"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </motion.div>
+            Back to home
+          </a>
+        </motion.div>
       </div>
 
       <div className="absolute inset-0 z-0">
@@ -322,6 +376,9 @@ const Signup = () => {
           <Stars radius={50} count={2500} factor={4} fade speed={2} />
         </Canvas>
       </div>
+      
+      {/* Grid background */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] -z-10" />
     </motion.section>
   );
 };

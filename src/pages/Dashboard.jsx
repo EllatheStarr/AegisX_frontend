@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import {
   useMotionTemplate,
   useMotionValue,
-  motion,
+  motion, // eslint-disable-line no-unused-vars
   animate,
 } from "framer-motion";
 
@@ -36,7 +36,7 @@ const Dashboard = () => {
       repeat: Infinity,
       repeatType: "mirror",
     });
-  }, []);
+  }, [color]);
 
   const border = useMotionTemplate`1px solid ${color}`;
   const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;
@@ -134,11 +134,10 @@ const Dashboard = () => {
           <motion.div 
             className="bg-gray-900/60 backdrop-blur-sm p-6 rounded-xl shadow-lg"
             whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
             style={{ boxShadow }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ type: "spring", stiffness: 300, duration: 0.5, delay: 0.1 }}
           >
             <h3 className="text-lg font-medium mb-4">Banking Platform Security</h3>
             <div className="flex items-center mb-2">
@@ -158,11 +157,15 @@ const Dashboard = () => {
           <motion.div 
             className="bg-gray-900/60 backdrop-blur-sm p-6 rounded-xl shadow-lg"
             whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
             style={{ boxShadow }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 300, 
+              duration: 0.5, 
+              delay: 0.2 
+            }}
           >
             <h3 className="text-lg font-medium mb-4">Financial Transaction Security</h3>
             <div className="flex space-x-4 mb-2">
@@ -185,11 +188,15 @@ const Dashboard = () => {
           <motion.div 
             className="bg-gray-900/60 backdrop-blur-sm p-6 rounded-xl shadow-lg"
             whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
             style={{ boxShadow }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 300, 
+              duration: 0.5, 
+              delay: 0.3 
+            }}
           >
             <h3 className="text-lg font-medium mb-4">User Authentication</h3>
             <div className="space-y-2">
@@ -291,11 +298,15 @@ const Dashboard = () => {
           <motion.div 
             className="bg-gray-900/60 backdrop-blur-sm p-6 rounded-xl shadow-lg"
             whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 300,
+              duration: 0.5, 
+              delay: 0.5 
+            }}
             style={{ boxShadow }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
           >
             <h3 className="text-lg font-medium mb-4">Financial Compliance Status</h3>
             <div className="space-y-4">
@@ -341,12 +352,35 @@ const Dashboard = () => {
           <motion.div 
             className="bg-gray-900/60 backdrop-blur-sm p-6 rounded-xl shadow-lg"
             whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
             style={{ boxShadow }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 300,
+              duration: 0.5, 
+              delay: 0.6 
+            }}
           >
+            <h3 className="text-lg font-medium mb-4">System Vulnerabilities</h3>
+            <div className="grid grid-cols-4 gap-3 mb-4">
+              <div className="p-3 bg-red-900/40 rounded text-center">
+                <span className="block text-2xl font-bold text-red-400">{vulnerabilitiesSummary.critical}</span>
+                <span className="text-xs text-gray-400">Critical</span>
+              </div>
+              <div className="p-3 bg-orange-900/40 rounded text-center">
+                <span className="block text-2xl font-bold text-orange-400">{vulnerabilitiesSummary.high}</span>
+                <span className="text-xs text-gray-400">High</span>
+              </div>
+              <div className="p-3 bg-yellow-900/40 rounded text-center">
+                <span className="block text-2xl font-bold text-yellow-400">{vulnerabilitiesSummary.medium}</span>
+                <span className="text-xs text-gray-400">Medium</span>
+              </div>
+              <div className="p-3 bg-blue-900/40 rounded text-center">
+                <span className="block text-2xl font-bold text-blue-400">{vulnerabilitiesSummary.low}</span>
+                <span className="text-xs text-gray-400">Low</span>
+              </div>
+            </div>
             <h3 className="text-lg font-medium mb-4">Payment Gateway Security</h3>
             <div className="aspect-video bg-gray-900 rounded flex items-center justify-center">
               <p className="text-gray-500">Payment Processing Security Visualization</p>

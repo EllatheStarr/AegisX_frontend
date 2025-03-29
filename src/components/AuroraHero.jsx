@@ -7,6 +7,7 @@ import {
   motion as Motion,
   animate,
 } from "framer-motion";
+import { Brain, Link as LinkIcon, Shield } from "lucide-react";
 
 const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
 
@@ -43,6 +44,7 @@ export const AuroraHero = () => {
   const backgroundImage = useMotionTemplate`radial-gradient(125% 125% at 50% 0%, #020617 50%, ${color})`;
   const border = useMotionTemplate`1px solid ${color}`;
   const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;
+  const badgeGlow = useMotionTemplate`0px 0px 15px ${color}`;
 
   return (
     <Motion.section
@@ -52,14 +54,31 @@ export const AuroraHero = () => {
       className="relative grid min-h-screen place-content-center overflow-hidden bg-gray-950 px-4 py-24 text-gray-200"
     >
       <div className="relative z-10 flex flex-col items-center">
-        <span className="mb-2 inline-block rounded-full bg-gray-600/40 px-4 py-1 text-xs font-medium tracking-wider uppercase">
-          🛡 AI · Blockchain · Defense
-        </span>
+        <Motion.div
+          style={{ boxShadow: badgeGlow }}
+          className="mb-6 backdrop-blur-sm border border-gray-700/50 rounded-full bg-gray-900/70 px-6 py-2 inline-flex items-center gap-5"
+        >
+          <div className="flex items-center gap-2">
+            <Brain size={16} className="text-white/90" />
+            <span className="text-xs font-medium tracking-wider uppercase text-white/90">AI</span>
+          </div>
+          <div className="h-4 w-px bg-gray-700/50"></div>
+          <div className="flex items-center gap-2">
+            <LinkIcon size={16} className="text-white/90" />
+            <span className="text-xs font-medium tracking-wider uppercase text-white/90">Blockchain</span>
+          </div>
+          <div className="h-4 w-px bg-gray-700/50"></div>
+          <div className="flex items-center gap-2">
+            <Shield size={16} className="text-white/90" />
+            <span className="text-xs font-medium tracking-wider uppercase text-white/90">Defense</span>
+          </div>
+        </Motion.div>
+        
         <h1 className="max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-semibold tracking-tight leading-none text-transparent sm:text-5xl sm:leading-tight md:text-6xl md:leading-tight">
           Next-Gen Cybersecurity for Digital Finance
         </h1>
         <p className="my-5 max-w-lg text-center text-base text-gray-300/90 font-light leading-relaxed md:text-lg">
-          Intelligent protection against advanced threats — zero-day exploits, ransomware, and supply chain vulnerabilities for modern financial platforms.
+          Advanced fraud detection and prevention for neobanks digital finance. Protect customer accounts, secure transactions, and prevent financial losses with AI-powered threat intelligence and blockchain verification.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 items-center mt-2">
           <Motion.button
