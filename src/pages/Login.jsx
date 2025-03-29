@@ -52,10 +52,20 @@ const Login = () => {
       if (isValid) {
         setSuccess(true);
         setError("");
-        // In a real app, you would redirect or set auth state
-        alert("Login successful! Welcome back to AegisX.");
+        // Immediately navigate to dashboard
+        setTimeout(() => {
+          window.navigate('/dashboard');
+        }, 1500);
       } else {
         setError("Invalid email or password. Please try again.");
+        // Shake effect for error feedback
+        const formElement = document.querySelector('form');
+        formElement.classList.add('shake-animation');
+        setTimeout(() => {
+          formElement.classList.remove('shake-animation');
+        }, 500);
+        // Focus on email field for re-entry
+        document.getElementById('email').focus();
       }
       setLoading(false);
     }, 1000);
@@ -96,12 +106,13 @@ const Login = () => {
                 style={{ border }}
                 className="w-full py-2 rounded-md transition-colors"
                 whileHover={{ scale: 1.02 }}
+                onClick={() => window.navigate('/dashboard')}
               >
                 Go to Dashboard
               </motion.button>
             </div>
           ) : (
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleLogin} className="login-form">
               <div className="space-y-5">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium mb-1">Company Email</label>
@@ -132,9 +143,19 @@ const Login = () => {
                 </div>
 
                 {error && (
-                  <div className="text-red-500 text-sm py-2">
-                    {error}
-                  </div>
+                  <motion.div 
+                    className="text-red-500 text-sm py-2 bg-red-900/20 border border-red-900/50 rounded-md px-3"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      {error}
+                    </div>
+                  </motion.div>
                 )}
 
                 <div>

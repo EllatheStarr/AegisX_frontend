@@ -3,6 +3,7 @@ import './App.css';
 import Homepage from './pages/Homepage';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(window.location.pathname);
@@ -14,6 +15,8 @@ function App() {
         return <Login />;
       case '/signup':
         return <Signup />;
+      case '/dashboard':
+        return <Dashboard />;
       default:
         return <Homepage />;
     }
