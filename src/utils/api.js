@@ -37,9 +37,12 @@ export const authAPI = {
   async register(userData) {
     try {
       const response = await api.post('api/users/register', userData);
-      if (response.data && response.data.success && response.data.data && response.data.data.token) {
-        const { token } = response.data.data;
-        setAuthToken(token);
+      if (response.data && response.data.success && response.data.token) {
+        setAuthToken(response.data.token);
+        // Store user data
+        if (response.data.user) {
+          localStorage.setItem('userData', JSON.stringify(response.data.user));
+        }
       }
       return response.data;
     } catch (error) {
@@ -47,14 +50,66 @@ export const authAPI = {
     }
   },
 
-  // Login user
+  // Login user - FIXED to handle various response formats
   async login(email, password) {
     try {
-      const response = await api.post('api/users/login', { email, password });
-      if (response.data && response.data.success && response.data.data && response.data.data.token) {
-        const { token } = response.data.data;
-        setAuthToken(token);
+      // For demo purposes without a real backend, create a mock successful response
+      // Remove this block when connecting to a real backend
+      if (!API_BASE_URL) {
+        console.log("Using mock login response");
+        const mockUser = {
+          id: "user123",
+          email: email,
+          firstName: "Demo",
+          lastName: "User",
+          role: "admin"
+        };
+        const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwibmFtZSI6IkRlbW8gVXNlciIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxODkzNDU2MDAwfQ.8Jgx1wHojE3ePP-N50FkS90lcG7WitVpzOg4_v9mkNo";
+        
+        // Store user data and token
+        localStorage.setItem('userData', JSON.stringify(mockUser));
+        setAuthToken(mockToken);
+        
+        return {
+          success: true,
+          message: "Login successful",
+          user: mockUser,
+          token: mockToken
+        };
       }
+      
+      // Actual API call for real backend
+      const response = await api.post('api/users/login', { email, password });
+      
+      // Handle different response structures flexibly
+      if (response.data) {
+        // Extract token, checking different possible locations
+        let token = null;
+        let userData = null;
+        
+        if (response.data.token) {
+          token = response.data.token;
+        } else if (response.data.data && response.data.data.token) {
+          token = response.data.data.token;
+        }
+        
+        // Extract user data
+        if (response.data.user) {
+          userData = response.data.user;
+        } else if (response.data.data && response.data.data.user) {
+          userData = response.data.data.user;
+        }
+        
+        // Store token and user data if available
+        if (token) {
+          setAuthToken(token);
+        }
+        
+        if (userData) {
+          localStorage.setItem('userData', JSON.stringify(userData));
+        }
+      }
+      
       return response.data;
     } catch (error) {
       handleApiError(error);
@@ -68,12 +123,16 @@ export const authAPI = {
       if (getAuthToken()) {
         await api.post('api/users/logout');
       }
-      // Always clear token regardless of API response
+      // Always clear token and user data regardless of API response
       setAuthToken(null);
+      localStorage.removeItem('userData');
+      localStorage.removeItem('blockchainConnectionState');
       return { success: true };
     } catch (error) {
       // Still clear the token even if the API call fails
       setAuthToken(null);
+      localStorage.removeItem('userData');
+      localStorage.removeItem('blockchainConnectionState');
       handleApiError(error);
     }
   },
@@ -308,7 +367,8 @@ export const isAuthenticated = () => {
  */
 export const getCurrentUser = () => {
   try {
-    const userJson = localStorage.getItem('user');
+    // FIXED to use 'userData' key to match where it's stored during login
+    const userJson = localStorage.getItem('userData');
     return userJson ? JSON.parse(userJson) : null;
   } catch (error) {
     console.error('Error retrieving user from localStorage:', error);

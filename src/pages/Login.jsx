@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import {
@@ -15,7 +15,7 @@ import {
   Mail,
   CheckCircle
 } from "lucide-react";
-import { authAPI, isAuthenticated } from "../utils/api";
+import { authAPI, isAuthenticated, getCurrentUser } from "../utils/api";
 import { globalLoadingHandler } from "../utils/interceptors";
 
 const COLORS = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
@@ -26,22 +26,51 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const navigationAttemptedRef = useRef(false);
 
   const color = useMotionValue(COLORS[0]);
 
+  // Safe navigation function to prevent navigation loops
+  const safeNavigate = (path) => {
+    if (!navigationAttemptedRef.current) {
+      navigationAttemptedRef.current = true;
+      
+      // Small timeout to ensure state updates complete
+      setTimeout(() => {
+        window.navigate(path);
+        // Reset the flag after navigation
+        navigationAttemptedRef.current = false;
+      }, 100);
+    }
+  };
+
   useEffect(() => {
     // Check if already authenticated
-    if (isAuthenticated()) {
-      window.navigate('/dashboard');
-    }
-
-    animate(color, COLORS, {
+    const checkAuthentication = async () => {
+      try {
+        if (isAuthenticated()) {
+          safeNavigate('/dashboard');
+          return;
+        }
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
+    
+    checkAuthentication();
+    
+    // Color animation logic
+    const colorAnimation = animate(color, COLORS, {
       ease: "easeInOut",
       duration: 10,
       repeat: Infinity,
       repeatType: "mirror",
     });
-  }, [color]);
+    
+    // Clean up animation on unmount
+    return () => colorAnimation.stop();
+  }, []); // Empty dependency array to run only once on mount
 
   const backgroundImage = useMotionTemplate`radial-gradient(125% 125% at 50% 0%, #020617 50%, ${color})`;
   const border = useMotionTemplate`1px solid ${color}`;
@@ -60,27 +89,24 @@ const Login = () => {
       // Call the login API
       const response = await authAPI.login(email, password);
       
-      // Check for successful login
-      if (response.success) {
+      console.log("Login response:", response);
+      
+      // Check if auth token was successfully set
+      if (isAuthenticated()) {
+        // Check if user data was saved properly
+        const userData = getCurrentUser();
+        console.log("User data after login:", userData);
+
         setSuccess(true);
         setError("");
         
         // Navigate to dashboard after a brief delay to show success message
         setTimeout(() => {
-          window.navigate('/dashboard');
+          safeNavigate('/dashboard');
         }, 1500);
       } else {
-        // Handle unsuccessful login (although this should be caught by the error handler)
-        setError(response.message || "Login failed. Please check your credentials.");
-        
-        // Shake effect for error feedback
-        const formElement = document.querySelector('form');
-        formElement.classList.add('shake-animation');
-        setTimeout(() => {
-          formElement.classList.remove('shake-animation');
-        }, 500);
-        
-        document.getElementById('email').focus();
+        // Something went wrong with authentication
+        setError("Authentication failed. Token could not be set.");
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -88,15 +114,22 @@ const Login = () => {
       
       // Shake effect for error feedback
       const formElement = document.querySelector('form');
-      formElement.classList.add('shake-animation');
-      setTimeout(() => {
-        formElement.classList.remove('shake-animation');
-      }, 500);
+      if (formElement) {
+        formElement.classList.add('shake-animation');
+        setTimeout(() => {
+          formElement.classList.remove('shake-animation');
+        }, 500);
+      }
     } finally {
       setLoading(false);
       globalLoadingHandler.endLoading();
     }
   };
+
+  // If we're still checking authentication, show nothing or a loading state
+  if (checkingAuth) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <motion.section

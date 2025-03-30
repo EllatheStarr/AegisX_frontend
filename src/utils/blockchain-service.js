@@ -11,22 +11,74 @@ class BlockchainService {
       hasWallet: false
     };
     this.transactionHistory = [];
+    this.initializationPromise = null;
+    
+    // Try to restore connection state from localStorage if available
+    this.restoreConnectionState();
+  }
+
+  // Restore connection state from localStorage if available
+  restoreConnectionState() {
+    try {
+      const savedState = localStorage.getItem('blockchainConnectionState');
+      if (savedState) {
+        const parsedState = JSON.parse(savedState);
+        this.initialized = parsedState.initialized || false;
+        this.connectionStatus = parsedState.connectionStatus || this.connectionStatus;
+      }
+    } catch (error) {
+      console.error('Error restoring blockchain connection state:', error);
+    }
+  }
+
+  // Save connection state to localStorage
+  saveConnectionState() {
+    try {
+      const stateToSave = {
+        initialized: this.initialized,
+        connectionStatus: this.connectionStatus
+      };
+      localStorage.setItem('blockchainConnectionState', JSON.stringify(stateToSave));
+    } catch (error) {
+      console.error('Error saving blockchain connection state:', error);
+    }
   }
 
   async initialize() {
     try {
+      // Use cached initialization promise if one exists
+      if (this.initializationPromise) {
+        return await this.initializationPromise;
+      }
+      
       // Prevent re-initialization
       if (this.initialized) return true;
       
+      // Create a new initialization promise
+      this.initializationPromise = this._doInitialization();
+      return await this.initializationPromise;
+    } catch (error) {
+      console.error('Error initializing blockchain service:', error);
+      return false;
+    }
+  }
+
+  // Internal initialization method
+  async _doInitialization() {
+    try {
       this.initialized = await this.connector.initialize();
       if (this.initialized) {
         this.connectionStatus = this.connector.getStatus();
+        this.saveConnectionState();
         return true;
       }
       return false;
     } catch (error) {
-      console.error('Error initializing blockchain service:', error);
+      console.error('Error in blockchain initialization:', error);
       return false;
+    } finally {
+      // Clear initialization promise regardless of outcome
+      this.initializationPromise = null;
     }
   }
 
@@ -38,6 +90,7 @@ class BlockchainService {
       });
       if (connected) {
         this.connectionStatus = this.connector.getStatus();
+        this.saveConnectionState();
       }
       return connected;
     } catch (error) {

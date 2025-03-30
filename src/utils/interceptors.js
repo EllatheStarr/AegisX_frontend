@@ -128,3 +128,61 @@ export const formatResponse = (responseData) => {
     timestamp: responseData.timestamp || new Date().toISOString()
   };
 };
+
+/**
+ * Setup interceptors to handle auth token in API requests
+ * @param {Object} axiosInstance - Axios instance
+ */
+export const setupAuthInterceptors = (axiosInstance) => {
+  // Request interceptor for API calls
+  axiosInstance.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+  );
+
+  // Response interceptor for API calls
+  axiosInstance.interceptors.response.use(
+    response => {
+      return response;
+    },
+    async error => {
+      const originalRequest = error.config;
+      
+      // If error is 401 Unauthorized and not already retrying
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        
+        try {
+          // Try to refresh token or handle session expiration
+          // ...refresh token logic if you have it...
+          
+          // If unable to refresh, clear auth and redirect to login
+          if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            window.navigate('/login');
+          }
+        } catch (refreshError) {
+          // Clear auth data on refresh failure
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userData');
+          
+          if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
+            window.navigate('/login');
+          }
+          return Promise.reject(refreshError);
+        }
+      }
+      
+      return Promise.reject(error);
+    }
+  );
+};

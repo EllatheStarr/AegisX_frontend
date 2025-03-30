@@ -4,19 +4,52 @@ import Homepage from './pages/Homepage';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
-import { isAuthenticated } from './utils/api';
+import { isAuthenticated, getCurrentUser } from './utils/api';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(window.location.pathname);
   const [loading, setLoading] = useState(true);
   const navigationInProgressRef = useRef(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // First, set loading to false once we've mounted
-    if (loading) {
-      setLoading(false);
-      return;
-    }
+    // First check if token exists in localStorage to avoid flashing login page
+    const checkInitialAuth = async () => {
+      try {
+        const authenticated = isAuthenticated();
+        const userData = getCurrentUser();
+        setUser(userData);
+        
+        console.log("App init - authenticated:", authenticated);
+        console.log("App init - userData:", userData);
+        
+        const path = window.location.pathname;
+        
+        // If on a protected route but not authenticated, redirect to login
+        if (path === '/dashboard' && !authenticated) {
+          console.log("Protected route without auth, redirecting to login");
+          window.history.pushState({}, "", "/login");
+          setCurrentPage('/login');
+        }
+        // If on login/signup but already authenticated, redirect to dashboard
+        else if ((path === '/login' || path === '/signup') && authenticated) {
+          console.log("Already authenticated, redirecting to dashboard");
+          window.history.pushState({}, "", "/dashboard");
+          setCurrentPage('/dashboard');
+        }
+      } finally {
+        // Always set loading to false when done
+        setLoading(false);
+      }
+    };
+    
+    checkInitialAuth();
+  }, []); // Empty dependency array means this runs once on mount
+
+  // The rest of useEffect to handle navigation changes
+  useEffect(() => {
+    // Skip if still loading initial state
+    if (loading) return;
     
     // Check authentication status for protected routes
     const checkAuthForProtectedRoutes = () => {
@@ -69,6 +102,8 @@ function App() {
 
   // Update URL without page refresh
   const navigate = (path) => {
+    console.log("Navigate called with path:", path);
+    
     // Skip if we're already handling navigation
     if (navigationInProgressRef.current) return;
     
@@ -77,6 +112,7 @@ function App() {
     
     // Check if trying to access protected route
     if (path === '/dashboard' && !isAuthenticated()) {
+      console.log("Attempt to navigate to dashboard without auth, redirecting to login");
       path = '/login';
     }
     
