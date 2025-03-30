@@ -78,7 +78,7 @@ export const AuroraHero = () => {
           Next-Gen Cybersecurity for Digital Finance
         </h1>
         <p className="my-5 max-w-lg text-center text-base text-gray-300/90 font-light leading-relaxed md:text-lg">
-          Advanced fraud detection and prevention for neobanks digital finance. Protect customer accounts, secure transactions, and prevent financial losses with AI-powered threat intelligence and blockchain verification.
+          Comprehensive protection against cyber threats for digital finance platforms. Safeguard customer data, secure transactions, and prevent security breaches with AI-powered threat intelligence and blockchain verification.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 items-center mt-2">
           <Motion.button

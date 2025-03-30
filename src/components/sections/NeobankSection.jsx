@@ -112,7 +112,7 @@ const NeobankSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-4xl md:text-5xl font-semibold bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent mb-5 leading-tight"
           >
-            Why Neobanks Need<br/>Advanced Fraud Protection
+            Why Neobanks Need<br/>Comprehensive Cyber Protection
           </motion.h2>
           
           <motion.p 
@@ -122,7 +122,7 @@ const NeobankSection = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-gray-300/90 font-light text-lg"
           >
-            Digital banking platforms face unique fraud challenges that traditional security approaches can't address. Aegis provides the specialized protection neobanks require.
+            Digital banking platforms face a complex landscape of cyber threats that traditional security approaches can't address. AegisX provides the advanced protection neobanks require against the full spectrum of digital risks.
           </motion.p>
         </div>
 

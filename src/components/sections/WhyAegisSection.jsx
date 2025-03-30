@@ -103,7 +103,7 @@ const WhyAegisSection = () => {
               style={{ boxShadow: textGlow }}
               className="text-xs uppercase tracking-[0.2em] font-medium inline-block py-1.5 px-4 rounded-full border border-gray-800 bg-gray-900/50 backdrop-blur-sm text-gray-200"
             >
-              Why Aegis
+              Why AegisX
             </motion.span>
           </motion.div>
           
@@ -114,7 +114,7 @@ const WhyAegisSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-4xl md:text-5xl font-semibold bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent mb-5 leading-tight"
           >
-            Advanced Fraud Prevention<br/>For Modern Banking
+            Comprehensive Cyber Protection<br/>For Modern Banking
           </motion.h2>
           
           <motion.p 
@@ -124,7 +124,7 @@ const WhyAegisSection = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-gray-300/90 font-light text-lg"
           >
-            Aegis delivers cutting-edge fraud detection and prevention designed specifically for neobanks and digital financial platforms, protecting your customers and assets from sophisticated threats.
+            AegisX delivers cutting-edge security solutions designed specifically for neobanks and digital financial platforms, protecting your systems, customers, and assets from the full spectrum of cyber threats.
           </motion.p>
         </div>
 
@@ -132,23 +132,23 @@ const WhyAegisSection = () => {
         <div className="grid gap-6 sm:grid-cols-2 mb-12">
           <FeatureCard 
             icon={Shield} 
-            title="AI-Driven Fraud Detection" 
-            description="Advanced machine learning algorithms analyze transaction patterns in real-time to identify anomalous activities before they result in financial losses." 
+            title="AI-Powered Threat Intelligence" 
+            description="Advanced machine learning algorithms analyze patterns in real-time to identify and neutralize cyber threats before they impact your operations or customer data." 
           />
           <FeatureCard 
             icon={AlertTriangle} 
-            title="Account Takeover Prevention" 
-            description="Sophisticated behavioral biometrics and authentication systems protect customer accounts from unauthorized access and identity theft." 
+            title="Multi-layered Security Defense" 
+            description="Sophisticated behavioral biometrics and authentication systems protect against unauthorized access, social engineering, and emerging cyber attack vectors." 
           />
           <FeatureCard 
             icon={Radio} 
-            title="Real-Time Monitoring" 
-            description="Continuous analysis of all transactions with instant alerts for suspicious activities, allowing immediate intervention to prevent fraud." 
+            title="Real-Time Security Monitoring" 
+            description="Continuous analysis of all system activities with instant alerts for suspicious events, allowing immediate intervention to prevent security breaches." 
           />
           <FeatureCard 
             icon={Database} 
-            title="Blockchain Transaction Integrity" 
-            description="Immutable record-keeping provides tamper-proof audit trails for all financial transactions, ensuring regulatory compliance and security." 
+            title="Blockchain Security Framework" 
+            description="Immutable record-keeping provides tamper-proof audit trails and transaction verification, ensuring regulatory compliance and comprehensive security." 
           />
         </div>
 
@@ -166,7 +166,7 @@ const WhyAegisSection = () => {
           >
             <h3 className="text-2xl font-medium mb-4 text-white">Ready to secure your financial platform?</h3>
             <p className="text-gray-300 mb-6 max-w-lg mx-auto">
-              See how Aegis can protect your neobank from fraud and financial crime with our next-generation security platform.
+              Discover how AegisX can protect your neobank from the full spectrum of cyber threats with our comprehensive security platform.
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}

@@ -126,7 +126,7 @@ const KeyFeaturesSection = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-gray-300/90 font-light text-lg"
           >
-            Aegis provides neobanks with industry-leading fraud detection capabilities, secure authentication, and transaction monitoring to protect your customers and assets.
+            AegisX provides neobanks with industry-leading fraud detection capabilities, secure authentication, and transaction monitoring to protect your customers and assets.
           </motion.p>
         </div>
 

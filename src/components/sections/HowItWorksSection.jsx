@@ -130,7 +130,7 @@ const HowItWorksSection = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-gray-300/90 font-light text-lg"
           >
-            Aegis provides comprehensive fraud detection and prevention through a seamless four-step process that integrates with your existing banking infrastructure.
+            AegisX provides comprehensive fraud detection and prevention through a seamless four-step process that integrates with your existing banking infrastructure.
           </motion.p>
         </div>
 
@@ -176,7 +176,7 @@ const HowItWorksSection = () => {
                 <Activity size={48} className="mb-4 text-white/80" strokeWidth={1} />
                 <h3 className="text-2xl font-medium mb-3 text-white">Seamless Integration</h3>
                 <p className="text-gray-300/90 font-light mb-4">
-                  Aegis integrates with your existing neobank infrastructure, providing real-time dashboard monitoring and robust fraud prevention without disrupting operations.
+                  AegisX integrates with your existing neobank infrastructure, providing real-time dashboard monitoring and robust fraud prevention without disrupting operations.
                 </p>
               </div>
               <div className="md:w-2/3 grid grid-cols-2 gap-4">

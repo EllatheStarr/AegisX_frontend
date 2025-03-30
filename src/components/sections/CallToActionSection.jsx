@@ -96,7 +96,7 @@ const CallToActionSection = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-gray-300/90 font-light text-lg mb-10 max-w-2xl mx-auto"
           >
-            Stay ahead of cyber threats with next-generation AI defense. Prevent fraud in real-time with Aegis's intelligent threat detection platform designed specifically for neobanks.
+            Stay ahead of cyber threats with next-generation AI defense. Prevent fraud in real-time with AegisX's intelligent threat detection platform designed specifically for neobanks.
           </Motion.p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
