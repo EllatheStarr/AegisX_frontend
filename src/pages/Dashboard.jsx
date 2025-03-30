@@ -4,9 +4,11 @@ import { Canvas } from "@react-three/fiber";
 import {
   useMotionTemplate,
   useMotionValue,
-  motion, // eslint-disable-line no-unused-vars
+  motion,
   animate,
 } from "framer-motion";
+import { authAPI, getCurrentUser } from "../utils/api";
+import { globalLoadingHandler } from "../utils/interceptors";
 
 // Same color scheme as AuroraHero for consistency
 const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
@@ -27,9 +29,21 @@ const complianceStatus = { pci: 92, gdpr: 97, sox: 86, aml: 95 };
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [user, setUser] = useState(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const color = useMotionValue(COLORS_TOP[0]);
 
   useEffect(() => {
+    // Get current user data from localStorage
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      // Redirect to login if no user found
+      window.navigate('/login');
+      return;
+    }
+    
+    setUser(currentUser);
+
     animate(color, COLORS_TOP, {
       ease: "easeInOut",
       duration: 10,
@@ -37,6 +51,32 @@ const Dashboard = () => {
       repeatType: "mirror",
     });
   }, [color]);
+
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (!user) return "?";
+    
+    const firstName = user.firstName || '';
+    const lastName = user.lastName || '';
+    
+    return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+  };
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      globalLoadingHandler.startLoading();
+      await authAPI.logout();
+      window.navigate('/login');
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Still redirect to login even if API call fails
+      window.navigate('/login');
+    } finally {
+      setIsLoggingOut(false);
+      globalLoadingHandler.endLoading();
+    }
+  };
 
   const border = useMotionTemplate`1px solid ${color}`;
   const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;
@@ -108,9 +148,11 @@ const Dashboard = () => {
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
-                FT
+                {getUserInitials()}
               </div>
-              <span className="hidden md:inline-block text-sm font-medium">Fintech Demo</span>
+              <span className="hidden md:inline-block text-sm font-medium">
+                {user ? `${user.firstName} ${user.lastName}` : 'Loading...'}
+              </span>
             </div>
           </div>
         </div>
@@ -400,13 +442,24 @@ const Dashboard = () => {
         <div className="flex justify-between items-center">
           <p className="text-sm text-gray-400">© 2025 AegisX. All rights reserved.</p>
           <motion.button 
-            className="text-sm text-gray-400 hover:text-white rounded-full px-4 py-1"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className={`text-sm rounded-full px-4 py-1 flex items-center justify-center ${isLoggingOut ? 'opacity-70' : 'hover:text-white text-gray-400'}`}
+            whileHover={isLoggingOut ? {} : { scale: 1.05 }}
+            whileTap={isLoggingOut ? {} : { scale: 0.95 }}
             style={{ border }}
-            onClick={() => window.navigate('/login')}
+            onClick={handleLogout}
+            disabled={isLoggingOut}
           >
-            Log Out
+            {isLoggingOut ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Logging out...
+              </>
+            ) : (
+              'Log Out'
+            )}
           </motion.button>
         </div>
       </footer>

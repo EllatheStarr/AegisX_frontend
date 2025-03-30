@@ -5,6 +5,7 @@ import {
   useMotionTemplate,
   useMotionValue,
   animate,
+  motion
 } from "framer-motion";
 import { 
   Shield, 
@@ -14,6 +15,8 @@ import {
   Mail,
   CheckCircle
 } from "lucide-react";
+import { authAPI, isAuthenticated } from "../utils/api";
+import { globalLoadingHandler } from "../utils/interceptors";
 
 const COLORS = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
 
@@ -27,6 +30,11 @@ const Login = () => {
   const color = useMotionValue(COLORS[0]);
 
   useEffect(() => {
+    // Check if already authenticated
+    if (isAuthenticated()) {
+      window.navigate('/dashboard');
+    }
+
     animate(color, COLORS, {
       ease: "easeInOut",
       duration: 10,
@@ -40,43 +48,54 @@ const Login = () => {
   const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;
   const glowEffect = useMotionTemplate`0px 0px 30px ${color}`;
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    // Hardcoded credentials for demonstration
-    const validCredentials = [
-      { email: "admin@example.com", password: "securepw123" },
-      { email: "demo@neobank.com", password: "demo1234" },
-      { email: "enterprise@fintech.com", password: "enterprise" }
-    ];
+    try {
+      // Register the active request
+      globalLoadingHandler.startLoading();
 
-    setTimeout(() => {
-      const isValid = validCredentials.some(
-        cred => cred.email === email && cred.password === password
-      );
-
-      if (isValid) {
+      // Call the login API
+      const response = await authAPI.login(email, password);
+      
+      // Check for successful login
+      if (response.success) {
         setSuccess(true);
         setError("");
-        // Immediately navigate to dashboard
+        
+        // Navigate to dashboard after a brief delay to show success message
         setTimeout(() => {
           window.navigate('/dashboard');
         }, 1500);
       } else {
-        setError("Invalid email or password. Please try again.");
+        // Handle unsuccessful login (although this should be caught by the error handler)
+        setError(response.message || "Login failed. Please check your credentials.");
+        
         // Shake effect for error feedback
         const formElement = document.querySelector('form');
         formElement.classList.add('shake-animation');
         setTimeout(() => {
           formElement.classList.remove('shake-animation');
         }, 500);
-        // Focus on email field for re-entry
+        
         document.getElementById('email').focus();
       }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.message || "Authentication failed. Please try again.");
+      
+      // Shake effect for error feedback
+      const formElement = document.querySelector('form');
+      formElement.classList.add('shake-animation');
+      setTimeout(() => {
+        formElement.classList.remove('shake-animation');
+      }, 500);
+    } finally {
       setLoading(false);
-    }, 1000);
+      globalLoadingHandler.endLoading();
+    }
   };
 
   return (
@@ -200,7 +219,13 @@ const Login = () => {
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label htmlFor="password" className="block text-sm font-medium text-gray-300">Password</label>
-                  <a href="#" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">Forgot password?</a>
+                  <button 
+                    type="button"
+                    onClick={() => window.navigate('/forgot-password')}
+                    className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    Forgot password?
+                  </button>
                 </div>
                 <div className="relative">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -245,10 +270,7 @@ const Login = () => {
                 </motion.button>
               </div>
 
-              <div className="text-center text-sm text-gray-400 mt-3 pt-3 border-t border-gray-800">
-                <p>Demo credentials:</p>
-                <p className="font-mono text-xs mt-2 bg-gray-800/50 p-2 rounded-lg">Email: demo@neobank.com | Password: demo1234</p>
-              </div>
+            
             </form>
           )}
 

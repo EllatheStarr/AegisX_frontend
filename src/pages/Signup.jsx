@@ -5,6 +5,7 @@ import {
   useMotionTemplate,
   useMotionValue,
   animate,
+  motion
 } from "framer-motion";
 import { 
   Shield, 
@@ -17,6 +18,8 @@ import {
   CheckCircle,
   CreditCard
 } from "lucide-react";
+import { authAPI, isAuthenticated } from "../utils/api";
+import { globalLoadingHandler } from "../utils/interceptors";
 
 const COLORS = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
 
@@ -35,6 +38,11 @@ const Signup = () => {
   const color = useMotionValue(COLORS[0]);
 
   useEffect(() => {
+    // Check if already authenticated
+    if (isAuthenticated()) {
+      window.navigate('/dashboard');
+    }
+    
     animate(color, COLORS, {
       ease: "easeInOut",
       duration: 10,
@@ -56,11 +64,11 @@ const Signup = () => {
     });
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
     
-    // Simple validation
+    // Client-side validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -73,16 +81,57 @@ const Signup = () => {
     
     setLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess(true);
+    try {
+      // Register the active request
+      globalLoadingHandler.startLoading();
+
+      // Prepare user data for registration
+      const userData = {
+        firstName: formData.fullName.split(' ')[0],
+        lastName: formData.fullName.split(' ').slice(1).join(' ') || '',
+        email: formData.email,
+        password: formData.password,
+        company: formData.company
+      };
+
+      // Call register API
+      const response = await authAPI.register(userData);
       
-      // Redirect after showing success message
-      setTimeout(() => {
-        window.navigate('/dashboard');
-      }, 2000);
-    }, 1500);
+      if (response.success) {
+        setSuccess(true);
+        
+        // After successful registration, log the user in
+        try {
+          await authAPI.login(formData.email, formData.password);
+        } catch (loginErr) {
+          console.error("Auto-login after registration failed:", loginErr);
+          // Continue with success flow even if auto-login fails
+        }
+        
+        // Redirect after showing success message
+        setTimeout(() => {
+          window.navigate('/dashboard');
+        }, 2000);
+      } else {
+        setError(response.message || "Registration failed. Please try again.");
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      
+      // Handle different error types
+      if (err.status === 400) {
+        // Validation errors
+        setError(err.message || "Invalid registration data. Please check your information.");
+      } else if (err.status === 409) {
+        // User already exists
+        setError("A user with this email already exists. Please log in instead.");
+      } else {
+        setError("Registration failed. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+      globalLoadingHandler.endLoading();
+    }
   };
 
   return (

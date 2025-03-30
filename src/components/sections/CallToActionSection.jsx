@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import {
-  motion,
+  motion as Motion,
   useMotionTemplate,
   useMotionValue,
   animate
@@ -33,7 +33,7 @@ const CallToActionSection = () => {
     <section className="relative bg-gradient-to-b from-gray-900 to-gray-950 py-24 px-4 overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden -z-10">
-        <motion.div 
+        <Motion.div 
           className="absolute top-0 left-1/4 w-72 h-72 bg-opacity-50 rounded-full filter blur-[100px]"
           animate={{ 
             backgroundColor: COLORS,
@@ -46,7 +46,7 @@ const CallToActionSection = () => {
             repeatType: "reverse"
           }}
         />
-        <motion.div 
+        <Motion.div 
           className="absolute bottom-0 right-1/4 w-80 h-80 bg-opacity-50 rounded-full filter blur-[120px]"
           animate={{ 
             backgroundColor: [...COLORS].reverse(),
@@ -62,7 +62,7 @@ const CallToActionSection = () => {
       </div>
       
       <div className="max-w-5xl mx-auto relative z-10">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -71,15 +71,15 @@ const CallToActionSection = () => {
           className="rounded-3xl bg-gray-900/40 backdrop-blur-xl p-10 md:p-16 text-center"
         >
           <div className="flex justify-center mb-6">
-            <motion.div 
+            <Motion.div 
               style={{ boxShadow: textGlow }}
               className="rounded-full p-4 bg-gray-900/70 border border-gray-800"
             >
               <Shield size={40} className="text-white" strokeWidth={1.5} />
-            </motion.div>
+            </Motion.div>
           </div>
           
-          <motion.h2
+          <Motion.h2
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -87,9 +87,9 @@ const CallToActionSection = () => {
             className="text-3xl md:text-5xl font-semibold bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent mb-6 leading-tight"
           >
             Protect Your Financial Platform<br/>with Advanced Fraud Prevention
-          </motion.h2>
+          </Motion.h2>
           
-          <motion.p 
+          <Motion.p 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -97,10 +97,10 @@ const CallToActionSection = () => {
             className="text-gray-300/90 font-light text-lg mb-10 max-w-2xl mx-auto"
           >
             Stay ahead of cyber threats with next-generation AI defense. Prevent fraud in real-time with Aegis's intelligent threat detection platform designed specifically for neobanks.
-          </motion.p>
+          </Motion.p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.button
+            <Motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               style={{ boxShadow }}
@@ -109,9 +109,9 @@ const CallToActionSection = () => {
             >
               Get Started Now
               <ArrowRight size={18} />
-            </motion.button>
+            </Motion.button>
             
-            <motion.button
+            <Motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               className="px-8 py-3.5 rounded-xl bg-transparent border border-gray-700 text-white font-medium transition-all flex items-center gap-2 justify-center mx-auto"
@@ -119,7 +119,7 @@ const CallToActionSection = () => {
             >
               <MessageCircle size={18} />
               Talk to an Expert
-            </motion.button>
+            </Motion.button>
           </div>
           
           <div className="mt-10 flex flex-wrap justify-center gap-4">
@@ -140,7 +140,7 @@ const CallToActionSection = () => {
               <span className="text-gray-300 text-sm">Blockchain Secured</span>
             </div>
           </div>
-        </motion.div>
+        </Motion.div>
       </div>
 
       {/* Grid background */}
