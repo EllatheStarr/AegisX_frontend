@@ -1,7 +1,7 @@
 import React from "react";
 import { AuroraHero } from "../components/AuroraHero";
 import GitHubIcon from "../components/icons/GitHubIcon";
-import WhyAegisXSection from "../components/sections/WhyAegisXSection";
+import WhyAegisSection from "../components/sections/WhyAegisSection";
 import HowItWorksSection from "../components/sections/HowItWorksSection";
 import KeyFeaturesSection from "../components/sections/KeyFeaturesSection";
 import NeobankSection from "../components/sections/NeobankSection";
@@ -28,7 +28,7 @@ const LandingPage = () => {
       <AuroraHero />
 
       {/* Main Content Sections */}
-      <WhyAegisXSection />
+      <WhyAegisSection />
       <HowItWorksSection />
       <KeyFeaturesSection />
       <NeobankSection />
