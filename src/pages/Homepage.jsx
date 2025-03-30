@@ -15,7 +15,7 @@ const LandingPage = () => {
     <div className="bg-gray-950 text-gray-200 min-h-screen relative">
       {/* GitHub Link */}
       <a 
-        href="https://github.com/yourusername/aegisx" 
+        href="https://github.com/brabentil/AegisX.git" 
         target="_blank" 
         rel="noopener noreferrer"
         className="fixed top-4 right-4 z-50 p-2 rounded-full bg-gray-800/80 hover:bg-gray-700/80 transition-colors duration-300"
