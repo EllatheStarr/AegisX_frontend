@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import Homepage from './pages/Homepage';
 import Login from './pages/Login';
@@ -9,24 +9,42 @@ import { isAuthenticated } from './utils/api';
 function App() {
   const [currentPage, setCurrentPage] = useState(window.location.pathname);
   const [loading, setLoading] = useState(true);
+  const navigationInProgressRef = useRef(false);
 
   useEffect(() => {
+    // First, set loading to false once we've mounted
+    if (loading) {
+      setLoading(false);
+      return;
+    }
+    
     // Check authentication status for protected routes
     const checkAuthForProtectedRoutes = () => {
+      // If we're already processing a navigation, skip to prevent loops
+      if (navigationInProgressRef.current) {
+        return;
+      }
+      
       const protectedRoutes = ['/dashboard'];
       
       // If current page is a protected route and user is not authenticated
       if (protectedRoutes.includes(currentPage) && !isAuthenticated()) {
+        // Prevent navigation loops
+        navigationInProgressRef.current = true;
+        
         // Redirect to login
         window.history.pushState({}, "", "/login");
         setCurrentPage('/login');
+        
+        // Reset navigation flag after state update
+        setTimeout(() => {
+          navigationInProgressRef.current = false;
+        }, 100);
       }
-      
-      setLoading(false);
     };
     
     checkAuthForProtectedRoutes();
-  }, [currentPage]);
+  }, [currentPage, loading]);
 
   // Simple client-side routing
   const renderPage = () => {
@@ -42,8 +60,8 @@ function App() {
       case '/signup':
         return <Signup />;
       case '/dashboard':
-        // Additional runtime check to ensure protected routes remain protected
-        return isAuthenticated() ? <Dashboard /> : <Login />;
+        // Simply render Dashboard component - authentication check is done in useEffect
+        return <Dashboard />;
       default:
         return <Homepage />;
     }
@@ -51,6 +69,12 @@ function App() {
 
   // Update URL without page refresh
   const navigate = (path) => {
+    // Skip if we're already handling navigation
+    if (navigationInProgressRef.current) return;
+    
+    // Set navigation flag to avoid loops
+    navigationInProgressRef.current = true;
+    
     // Check if trying to access protected route
     if (path === '/dashboard' && !isAuthenticated()) {
       path = '/login';
@@ -58,12 +82,24 @@ function App() {
     
     window.history.pushState({}, "", path);
     setCurrentPage(path);
+    
+    // Reset navigation flag after state update
+    setTimeout(() => {
+      navigationInProgressRef.current = false;
+    }, 100);
   };
 
   // Listen for back/forward button
-  window.onpopstate = () => {
-    setCurrentPage(window.location.pathname);
-  };
+  useEffect(() => {
+    const handlePopState = () => {
+      if (!navigationInProgressRef.current) {
+        setCurrentPage(window.location.pathname);
+      }
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Make navigate function available globally
   window.navigate = navigate;
